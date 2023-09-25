@@ -1,6 +1,6 @@
 {
-  "name": "n8n-nodes-appwriteapi",
-  "version": "1.0.2",
+  "name": "n8n-nodes-appwriten8n",
+  "version": "0.0.8",
   "description": "An updated N8N module for Appwrite's API, includes operations for documents, functions, and storage. Based (very loosely, I rewrote everything) on n8n-nodes-appwrite.",
   "keywords": [
     "n8n-community-node-package",
@@ -37,7 +37,7 @@
       "dist/credentials/AppwriteApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/Appwrite/AppwriteApi.node.js"
+      "dist/nodes/Appwrite/Appwrite.node.js"
     ]
   },
   "devDependencies": {

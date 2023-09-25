@@ -29,11 +29,11 @@
 ## How to install
 
 For most, you'll install by simply going to your n8n instance, Settings -> Community Nodes, and then add
-this package name `n8n-nodes-appwrite-1.4.x`
+this package name `n8n-nodes-appwriten8n`
 
 To get started install the package in your n8n root directory with
 
-`npm install n8n-nodes-appwrite-1.4.x`
+`npm install n8n-nodes-appwriten8n`
 
 
 For docker add the following line before the font installation command in your [n8n Docker file](https://github.com/n8n-io/n8n/blob/master/docker/images/n8n/Dockerfile)

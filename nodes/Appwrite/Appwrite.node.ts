@@ -146,8 +146,8 @@ const convertStringToQuery = (query: string, index: string, value?: string | num
 
 export class Appwrite implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Appwrite API',
-		name: 'appwriteapi',
+		displayName: 'Appwrite',
+		name: 'appwrite',
 		icon: 'file:Appwrite.svg',
 		group: [],
 		version: 1,
@@ -238,7 +238,7 @@ export class Appwrite implements INodeType {
 					// get collectionID input
 					const collectionId = this.getNodeParameter('collectionId', 0) as string;
 					// get additional fields input
-					const optionalFields = this.getNodeParameter('options', 0) as IDataObject;
+					const optionalFields = this.getNodeParameter('queries', 0) as IDataObject;
 					const queriesToSend: string[] = []
 
 					if (optionalFields.options) {
@@ -263,7 +263,7 @@ export class Appwrite implements INodeType {
 					const collectionId = this.getNodeParameter('collectionId', 0) as string;
 					// get documentID input
 					const documentId = this.getNodeParameter('documentId', 0) as string;
-					const optionalFields = this.getNodeParameter('options', 0) as IDataObject;
+					const optionalFields = this.getNodeParameter('queries', 0) as IDataObject;
 					const queriesToSend: string[] = []
 
 					if (optionalFields.options) {
