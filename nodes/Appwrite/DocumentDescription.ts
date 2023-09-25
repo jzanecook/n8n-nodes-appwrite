@@ -212,6 +212,7 @@ export const documentFields: INodeProperties[] = [
 				operation: [
 					'createDoc',
 					'updateDoc',
+					'executeFunction',
 				],
 				resource: [
 					'document',

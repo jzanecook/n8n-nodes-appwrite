@@ -1,19 +1,15 @@
 import {
-	OptionsWithUri,
-} from 'request';
-
-import {
 	IHookFunctions,
 	IWebhookFunctions,
 } from 'n8n-core';
 
 import {
-	IDataObject, NodeApiError,
+	IDataObject,
 	ILoadOptionsFunctions,
 	IExecuteFunctions,
 } from 'n8n-workflow';
 
-import { Client, Health, Databases, Functions, Storage, Query, InputFile, Models } from 'node-appwrite';
+import { Client, Health, Databases, Functions, Storage, InputFile, Models } from 'node-appwrite';
 
 export async function getAppwriteClient(this: IExecuteFunctions | ILoadOptionsFunctions | IHookFunctions | IWebhookFunctions): Promise<Client> {
 	const credentials = await this.getCredentials('appwriteApi') as IDataObject;

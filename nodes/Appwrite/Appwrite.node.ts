@@ -17,16 +17,14 @@ import {
 } from 'n8n-workflow';
 
 import {
-	getAppwriteClient,
-	getAppwriteDatabase,
-	getAppwriteFunction,
+	// getAppwriteFunction,
 	getAppwriteHealthTest,
 	createAppwriteDocument,
 	getAppwriteDocument,
 	listAppwriteDocuments,
 	deleteAppwriteDocument,
-	getAppwriteCollection,
-	listAppwriteCollections,
+	// getAppwriteCollection,
+	// listAppwriteCollections,
 	listAppwriteFunctions,
 	runAppwriteFunction,
 	deleteAppwriteStorageBucket,
@@ -38,10 +36,6 @@ import {
 	listAppwriteStorage,
 	getAppwriteStorageFile,
 } from './AppwriteFunctions';
-
-import {
-	OptionsWithUri,
-} from 'request';
 
 import { documentFields, documentOperations, functionFields, storageFields, functionOperations, storageOperations } from './DocumentDescription';
 import { ID, Models, Query } from "node-appwrite";
@@ -138,10 +132,10 @@ async function listIndexes(this: ILoadOptionsFunctions, filter?: string, paginat
 	const credentials = await this.getCredentials('appwriteApi') as IDataObject;
 	if (filter) {
 		const collectionId = this.getNodeParameter('collectionId', "");
-		const indices = await getAppwriteCollectionIndices.call(this, `${credentials.databaseId}`, `${collectionId}`);
-		const indicesMapped = indices.indexes.map(({ key }) => ({
-			name: key,
-			value: key,
+		const indices: Models.IndexList = await getAppwriteCollectionIndices.call(this, `${credentials.databaseId}`, `${collectionId}`);
+		const indicesMapped = indices.indexes.map((index: Models.Index) => ({
+			name: index.key,
+			value: index.key,
 		}));
 		const returnData: INodeListSearchResult = {
 			results: indicesMapped,
@@ -354,7 +348,8 @@ export class Appwrite implements INodeType {
 					returnData.push(responseData);
 				} else if (operation === 'getFunction') {
 					const functionId = this.getNodeParameter('functionId', 0) as string;
-					responseData = await getAppwriteFunction.call(this, functionId);
+					const data = this.getNodeParameter('body', 0) as IDataObject;
+					responseData = await runAppwriteFunction.call(this, functionId, data);
 					returnData.push(responseData);
 				}
 			} else if (resource === 'storage') {
@@ -373,7 +368,6 @@ export class Appwrite implements INodeType {
 					returnData.push(responseData);
 				} else if (operation === 'createBucket') {
 					const name = this.getNodeParameter('name', 0) as string;
-					const mimeType = this.getNodeParameter('mimeType', 0) as string;
 					const permissions = this.getNodeParameter('permissions', 0) as string;
 					const fileSecurity = this.getNodeParameter('fileSecurity', 0) as boolean;
 					const enabled = this.getNodeParameter('enabled', 0) as boolean;
