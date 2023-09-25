@@ -3,22 +3,19 @@
 // } from 'n8n-core';
 
 import {
-	ICredentialsDecrypted,
-	ICredentialTestFunctions,
 	IDataObject,
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
 	NodeExecutionWithMetadata,
-	INodeCredentialTestResult,
-	INodeListSearchResult,
-	ILoadOptionsFunctions,
+	// INodeListSearchResult,
+	// ILoadOptionsFunctions,
 	IExecuteFunctions,
+	NodeApiError,
 } from 'n8n-workflow';
 
 import {
 	// getAppwriteFunction,
-	getAppwriteHealthTest,
 	createAppwriteDocument,
 	getAppwriteDocument,
 	listAppwriteDocuments,
@@ -32,13 +29,13 @@ import {
 	createAppwriteStorageBucket,
 	createAppwriteStorageFile,
 	deleteAppwriteStorageFile,
-	getAppwriteCollectionIndices,
+	// getAppwriteCollectionIndices,
 	listAppwriteStorage,
 	getAppwriteStorageFile,
 } from './AppwriteFunctions';
 
 import { documentFields, documentOperations, functionFields, storageFields, functionOperations, storageOperations } from './DocumentDescription';
-import { ID, Models, Query } from "node-appwrite";
+import { ID, Query } from "node-appwrite";
 
 const convertStringToQuery = (query: string, index: string, value?: string | number, value2?: string) => {
 	switch (query) {
@@ -123,50 +120,48 @@ const convertStringToQuery = (query: string, index: string, value?: string | num
 				return Query.cursorBefore(JSON.parse(value.toString()));
 			}
 		default:
-			throw new Error("Query not found");
+			return "";
 	}
 }
 
 
-async function listIndexes(this: ILoadOptionsFunctions, filter?: string, paginationToken?: string): Promise<INodeListSearchResult> {
-	const credentials = await this.getCredentials('appwriteApi') as IDataObject;
-	if (filter) {
-		const collectionId = this.getNodeParameter('collectionId', "");
-		const indices: Models.IndexList = await getAppwriteCollectionIndices.call(this, `${credentials.databaseId}`, `${collectionId}`);
-		const indicesMapped = indices.indexes.map((index: Models.Index) => ({
-			name: index.key,
-			value: index.key,
-		}));
-		const returnData: INodeListSearchResult = {
-			results: indicesMapped,
-		}
-		return returnData;
-	}
-	return {
-		results: [],
-	}
-}
+// async function listIndexes(this: ILoadOptionsFunctions, filter?: string, paginationToken?: string): Promise<INodeListSearchResult> {
+// 	const credentials = await this.getCredentials('appwriteApi') as IDataObject;
+// 	if (filter) {
+// 		const collectionId = this.getNodeParameter('collectionId', "");
+// 		const indices: Models.IndexList = await getAppwriteCollectionIndices.call(this, `${credentials.databaseId}`, `${collectionId}`);
+// 		const indicesMapped = indices.indexes.map((index: Models.Index) => ({
+// 			name: index.key,
+// 			value: index.key,
+// 		}));
+// 		const returnData: INodeListSearchResult = {
+// 			results: indicesMapped,
+// 		}
+// 		return returnData;
+// 	}
+// 	return {
+// 		results: [],
+// 	}
+// }
 
 export class Appwrite implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Appwrite',
-		name: 'appwrite',
+		displayName: 'Appwrite API',
+		name: 'appwriteapi',
 		icon: 'file:Appwrite.svg',
-		group: ['transform'],
+		group: [],
 		version: 1,
 		subtitle: '={{ $parameter["operation"] + ": " + $parameter["resource"] }}',
 		description: "Use Appwrite's API from inside N8N, updated by @ZachHandley",
 		defaults: {
 			name: 'Appwrite',
-			color: '#1A82e2',
 		},
 		inputs: ['main'],
 		outputs: ['main'],
 		credentials: [
 			{
 				name: 'appwriteApi',
-				required: false,
-				testedBy: 'appwriteApiTest',
+				required: true,
 			},
 		],
 		properties: [
@@ -177,16 +172,14 @@ export class Appwrite implements INodeType {
 				type: 'options',
 				options: [
 					{
-						name: 'Documents',
+						name: 'Document',
 						value: 'document',
 					},
 					{
-
-						name: 'Functions',
+						name: 'Function',
 						value: 'function',
 					},
 					{
-
 						name: 'Storage',
 						value: 'storage',
 					},
@@ -202,32 +195,6 @@ export class Appwrite implements INodeType {
 			...storageOperations,
 			...storageFields,
 		],
-	};
-
-	methods = {
-		loadOptions: {},
-		listSearch: {
-			listIndexes,
-		},
-		credentialTest: {
-			async appwriteApiTest(this: ICredentialTestFunctions, credential: ICredentialsDecrypted): Promise<INodeCredentialTestResult> {
-				const credentials = credential.data as IDataObject;
-				try {
-					await getAppwriteHealthTest(credentials);
-					const testResult: INodeCredentialTestResult = {
-						status: 'OK',
-						message: 'Authentication successful',
-					}
-					return testResult;
-				} catch (error) {
-					const testResult: INodeCredentialTestResult = {
-						status: 'Error',
-						message: `Auth settings are not valid: ${error}`,
-					}
-					return testResult;
-				}
-			},
-		},
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][] | NodeExecutionWithMetadata[][] | null> {
@@ -348,7 +315,7 @@ export class Appwrite implements INodeType {
 					returnData.push(responseData);
 				} else if (operation === 'getFunction') {
 					const functionId = this.getNodeParameter('functionId', 0) as string;
-					const data = this.getNodeParameter('body', 0) as IDataObject;
+					const data = this.getNodeParameter('data', 0) as IDataObject;
 					responseData = await runAppwriteFunction.call(this, functionId, data);
 					returnData.push(responseData);
 				}
@@ -396,7 +363,7 @@ export class Appwrite implements INodeType {
 					returnData.push({ "success": responseData });
 				}
 			} else {
-				throw new Error(`The resource "${resource}" is not known!`);
+				throw new NodeApiError(this.getNode(), { "Error": "Resource not found" });
 			}
 		} catch (error: any) {
 			if (this.continueOnFail()) {

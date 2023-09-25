@@ -9,10 +9,10 @@ import {
 	IExecuteFunctions,
 } from 'n8n-workflow';
 
-import { Client, Health, Databases, Functions, Storage, InputFile, Models } from 'node-appwrite';
+import { Client, Databases, Functions, Storage, InputFile, Models } from 'node-appwrite';
 
 export async function getAppwriteClient(this: IExecuteFunctions | ILoadOptionsFunctions | IHookFunctions | IWebhookFunctions): Promise<Client> {
-	const credentials = await this.getCredentials('appwriteApi') as IDataObject;
+	const credentials = await this.getCredentials('appwriteApiAuth') as IDataObject;
 	if (credentials === undefined) {
 		throw new Error("No credentials got returned, they are needed before making any requests!");
 	} else {
@@ -131,9 +131,4 @@ export async function deleteAppwriteStorageBucket(this: IExecuteFunctions | ILoa
 	const client = await getAppwriteClient.call(this);
 	const storage = new Storage(client);
 	return storage.deleteBucket(bucketId);
-}
-
-export async function getAppwriteHealthTest(credentials: IDataObject): Promise<Models.HealthStatus> {
-	const client = new Client().setEndpoint(`${credentials.url}`).setProject(`${credentials.projectId}`).setKey(`${credentials.apiKey}`);
-	return new Health(client).get();
 }

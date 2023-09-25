@@ -4,8 +4,8 @@ import {
 
 export const documentOperations: INodeProperties[] = [
 	{
-		displayName: 'Documents',
-		name: 'documentOperation',
+		displayName: 'Options',
+		name: 'option',
 		noDataExpression: true,
 		type: 'options',
 		displayOptions: {
@@ -18,39 +18,48 @@ export const documentOperations: INodeProperties[] = [
 		options: [
 			{
 				name: 'Create',
+				displayName: "Create Document",
 				value: 'createDoc',
+				action: 'Create Document',
 				description: 'Create a document in collection',
 			},
 			{
 				name: 'Delete',
+				displayName: "Delete Document",
 				value: 'deleteDoc',
+				action: 'Delete Document',
 				description: 'Delete document in collection',
 			},
 			{
 				name: 'Get',
+				displayName: "Get Document",
 				value: 'getDoc',
+				action: 'Get Document by ID',
 				description: 'Get a document in collection',
 			},
 			{
 				name: 'Get All',
+				displayName: "Get All Documents",
 				value: 'getAllDocs',
+				action: 'Get All Documents with optional queries',
 				description: 'Get all documents in collection',
 			},
 			{
 				name: 'Update',
+				displayName: "Update Document",
 				value: 'updateDoc',
+				action: 'Update Document',
 				description: 'Get all documents in collection',
 			},
 		],
 		default: 'getAllDocs',
-		description: 'Select the operation to perform on the collection of documents',
 	},
 ];
 
 export const functionOperations: INodeProperties[] = [
 	{
-		displayName: 'Functions',
-		name: 'functionOperations',
+		displayName: 'Options',
+		name: 'option',
 		noDataExpression: true,
 		type: 'options',
 		displayOptions: {
@@ -63,25 +72,28 @@ export const functionOperations: INodeProperties[] = [
 		options: [
 			{
 				name: 'List Functions',
+				displayName: "List Functions",
 				value: 'listFunctions',
+				action: 'List Functions',
 				description: 'List Functions in the current project',
 			},
 			{
 				name: 'Execute Function',
+				displayName: "Execute Function",
 				value: 'executeFunction',
+				action: 'Execute Function',
 				description: 'Execute a given function and output its result',
 			},
 		],
 		default: 'executeFunction',
-		description: 'Select the operation to perform on Functions, currently only Execution and listing is supported',
 	},
 ];
 
 export const storageOperations: INodeProperties[] = [
 
 	{
-		displayName: 'Storage',
-		name: 'storageOperations',
+		displayName: 'Options',
+		name: 'option',
 		noDataExpression: true,
 		type: 'options',
 		displayOptions: {
@@ -94,42 +106,55 @@ export const storageOperations: INodeProperties[] = [
 		options: [
 			{
 				name: 'List Buckets',
+				displayName: "List Buckets",
 				value: 'listBuckets',
+				action: 'List Storage Buckets',
 				description: 'List your Storage Buckets in the current project',
 			},
 			{
 				name: 'List Files',
+				displayName: "List Files",
 				value: 'listFiles',
+				action: 'List Files in Bucket',
 				description: 'List files in a given bucket',
 			},
 			{
 				name: 'Get File',
+				displayName: "Get File",
 				value: 'getFile',
+				action: 'Get a File from Bucket by ID',
 				description: 'Get a file from a given bucket',
 			},
 			{
 				name: 'Create File',
+				displayName: "Create Files",
 				value: 'createFile',
+				action: 'Create a File in Bucket',
 				description: 'Create a file in a given bucket',
 			},
 			{
 				name: 'Create Bucket',
+				displayName: "Create Bucket",
 				value: 'createBucket',
+				action: 'Create a Storage Bucket',
 				description: 'Create a bucket in the current project',
 			},
 			{
 				name: 'Delete File',
+				displayName: "Delete File",
 				value: 'deleteFile',
+				action: 'Delete a File from Bucket by ID',
 				description: 'Delete a file from a given bucket',
 			},
 			{
 				name: 'Delete Bucket',
+				displayName: "Delete Bucket",
 				value: 'deleteBucket',
+				action: 'Delete a Storage Bucket',
 				description: 'Delete a bucket from the current project',
 			},
 		],
 		default: 'listFiles',
-		description: 'Select the operation to perform on Storage, you should be able to do most things with this node related to storage',
 	},
 ];
 
@@ -157,6 +182,7 @@ export const documentFields: INodeProperties[] = [
 			},
 		},
 		default: '',
+		requiresDataPath: 'single',
 		description: 'Database ID in which transaction will be performed',
 	},
 	{
@@ -179,13 +205,13 @@ export const documentFields: INodeProperties[] = [
 			},
 		},
 		default: '',
+		requiresDataPath: 'single',
 		description: 'Collection to list/create documents in',
 	},
 	{
 		displayName: 'Document ID',
 		name: 'documentId',
 		type: 'string',
-		required: false,
 		displayOptions: {
 			show: {
 				operation: [
@@ -200,6 +226,7 @@ export const documentFields: INodeProperties[] = [
 			},
 		},
 		default: 'unique()',
+		requiresDataPath: 'single',
 		description: 'Document ID for collection, if not provided will assume Queries will single out one document (e.g. by user_id) | For creating unique() is used for generating unique ID, it can be modified for custom document Id',
 	},
 	{
@@ -212,20 +239,20 @@ export const documentFields: INodeProperties[] = [
 				operation: [
 					'createDoc',
 					'updateDoc',
-					'executeFunction',
 				],
 				resource: [
 					'document',
 				],
 			},
 		},
+		requiresDataPath: 'multiple',
 		default: '{"attributeName1":"attribute-value1", "attributeName2":"attribute-value2"}',
 		description: 'Body to create document with',
 	},
 	{
-		displayName: 'Options',
+		displayName: 'Queries',
 		name: 'options',
-		type: 'collection',
+		type: 'fixedCollection',
 		placeholder: 'Add Query',
 		default: {},
 		displayOptions: {
@@ -244,14 +271,58 @@ export const documentFields: INodeProperties[] = [
 			{
 				displayName: 'Queries',
 				name: 'queries',
-				type: 'collection',
+				type: 'fixedCollection',
 				placeholder: 'Add Query',
 				default: [],
 				typeOptions: {
 					multipleValues: true,
 				},
-				description: "Queries to filter the documents by. [learn more about filtering](https://appwrite.io/docs/filters)",
+				description: 'Queries to filter the documents by. [learn more about filtering](https://appwrite.io/docs/filters).',
 				options: [
+					{
+						displayName: 'Index to Select',
+						name: 'index',
+						type: 'string',
+						default: '',
+						description: 'Index to select, if needed',
+						options: [
+							{
+								displayName: 'Name',
+								name: 'indexName',
+								type: 'string',
+								default: '',
+								hint: "Index to select",
+								placeholder: "user_id",
+							},
+							// {
+							// 	displayName: 'Select',
+							// 	name: 'indexSelect',
+							// 	type: 'list',
+							// 	hint: "Begin typing your index",
+							// 	typeOptions: {
+							// 		searchListMethod: 'listIndexes',
+							// 		searchable: true,
+							// 		searchFilterRequired: false,
+							// 	},
+							// },
+						],
+					},
+					{
+						displayName: 'Value 1',
+						name: 'value1',
+						type: 'string',
+						default: '',
+						requiresDataPath: 'single',
+						description: 'First value for queries, such as what the index is equal to, or the first value of a between',
+					},
+					{
+						displayName: 'Value 2',
+						name: 'value2',
+						type: 'string',
+						default: '',
+						requiresDataPath: 'single',
+						description: 'Second value for between and a few other queries, ignore if not needed',
+					},
 					{
 						displayName: 'Query',
 						name: 'query',
@@ -261,37 +332,37 @@ export const documentFields: INodeProperties[] = [
 							{
 								name: 'Select',
 								value: 'select',
-								description: 'Select which attributes should be returned from a document.',
+								description: 'Select which attributes should be returned from a document',
 							},
 							{
 								name: 'Equal',
 								value: 'equal',
-								description: 'Returns document if attribute is equal to any value in the provided array.',
+								description: 'Returns document if attribute is equal to any value in the provided array',
 							},
 							{
 								name: 'Not Equal',
 								value: 'not_equal',
-								description: 'Returns document if attribute is not equal to any value in the provided array.',
+								description: 'Returns document if attribute is not equal to any value in the provided array',
 							},
 							{
 								name: 'Less Than',
 								value: 'less_than',
-								description: 'Returns document if attribute is less than the provided value.',
+								description: 'Returns document if attribute is less than the provided value',
 							},
 							{
 								name: 'Less Than or Equal',
 								value: 'less_than_or_equal',
-								description: 'Returns document if attribute is less than or equal to the provided value.',
+								description: 'Returns document if attribute is less than or equal to the provided value',
 							},
 							{
 								name: 'Greater Than',
 								value: 'greater_than',
-								description: 'Returns document if attribute is greater than the provided value.',
+								description: 'Returns document if attribute is greater than the provided value',
 							},
 							{
 								name: 'Greater Than or Equal',
 								value: 'greater_than_or_equal',
-								description: 'Returns document if attribute is greater than or equal to the provided value.',
+								description: 'Returns document if attribute is greater than or equal to the provided value',
 							},
 							{
 								name: 'Between',
@@ -301,22 +372,22 @@ export const documentFields: INodeProperties[] = [
 							{
 								name: 'Is Null',
 								value: 'is_null',
-								description: 'Returns documents where attribute value is null.',
+								description: 'Returns documents where attribute value is null',
 							},
 							{
 								name: 'Is Not Null',
 								value: 'is_not_null',
-								description: 'Returns documents where attribute value is not null.',
+								description: 'Returns documents where attribute value is not null',
 							},
 							{
 								name: 'Starts With',
 								value: 'starts_with',
-								description: 'Returns documents if a string attributes starts with a substring.',
+								description: 'Returns documents if a string attributes starts with a substring',
 							},
 							{
 								name: 'Ends With',
 								value: 'ends_with',
-								description: 'Returns documents if a string attributes ends with a substring.',
+								description: 'Returns documents if a string attributes ends with a substring',
 							},
 							{
 								name: 'Search',
@@ -355,47 +426,6 @@ export const documentFields: INodeProperties[] = [
 							},
 						],
 					},
-					{
-						displayName: 'Index to Select',
-						name: 'index',
-						type: 'resourceLocator',
-						default: '',
-						description: 'Index to select, if needed',
-						modes: [
-							{
-								displayName: 'Name',
-								name: 'indexName',
-								type: 'string',
-								hint: "Index to select",
-								placeholder: "user_id",
-							},
-							{
-								displayName: 'Select',
-								name: 'indexSelect',
-								type: 'list',
-								hint: "Begin typing your index",
-								typeOptions: {
-									searchListMethod: 'listIndexes',
-									searchable: true,
-									searchFilterRequired: false,
-								},
-							},
-						],
-					},
-					{
-						displayName: 'Value 1',
-						name: 'value1',
-						type: 'string',
-						default: '',
-						description: 'First value for queries, such as what the index is equal to, or the first value of a between',
-					},
-					{
-						displayName: 'Value 2',
-						name: 'value2',
-						type: 'string',
-						default: '',
-						description: 'Second value for between and a few other queries, ignore if not needed',
-					},
 				],
 			},
 		],
@@ -425,7 +455,6 @@ export const functionFields: INodeProperties[] = [
 		displayName: 'Data',
 		name: 'data',
 		type: 'json',
-		required: false,
 		displayOptions: {
 			show: {
 				operation: [
@@ -437,6 +466,7 @@ export const functionFields: INodeProperties[] = [
 			},
 		},
 		default: '',
+		requiresDataPath: 'multiple',
 		description: 'Data to send to function',
 	},
 ];
@@ -467,7 +497,6 @@ export const storageFields: INodeProperties[] = [
 		displayName: 'File ID',
 		name: 'fileId',
 		type: 'string',
-		required: false,
 		displayOptions: {
 			show: {
 				operation: [
@@ -486,7 +515,6 @@ export const storageFields: INodeProperties[] = [
 		displayName: 'File Name',
 		name: 'fileName',
 		type: 'string',
-		required: false,
 		displayOptions: {
 			show: {
 				operation: [
@@ -503,9 +531,7 @@ export const storageFields: INodeProperties[] = [
 	{
 		displayName: 'File',
 		name: 'file',
-
 		type: 'string',
-		required: false,
 		displayOptions: {
 			show: {
 				operation: [
@@ -523,7 +549,6 @@ export const storageFields: INodeProperties[] = [
 		displayName: 'Mime Type',
 		name: 'mimeType',
 		type: 'string',
-		required: false,
 		displayOptions: {
 			show: {
 				operation: [
@@ -541,7 +566,6 @@ export const storageFields: INodeProperties[] = [
 		displayName: 'Name',
 		name: 'name',
 		type: 'string',
-		required: false,
 		displayOptions: {
 			show: {
 				operation: [
@@ -560,7 +584,6 @@ export const storageFields: INodeProperties[] = [
 		displayName: 'Permissions',
 		name: 'permissions',
 		type: 'multiOptions',
-		required: false,
 		displayOptions: {
 			show: {
 				operation: [
@@ -595,7 +618,6 @@ export const storageFields: INodeProperties[] = [
 		displayName: 'File Security',
 		name: 'fileSecurity',
 		type: 'boolean',
-		required: false,
 		displayOptions: {
 			show: {
 				operation: [
@@ -607,13 +629,12 @@ export const storageFields: INodeProperties[] = [
 			},
 		},
 		default: false,
-		description: 'Enable file security on bucket',
+		description: 'Whether to enable file security on bucket',
 	},
 	{
 		displayName: 'Enabled',
 		name: 'enabled',
 		type: 'boolean',
-		required: false,
 		displayOptions: {
 			show: {
 				operation: [
@@ -625,13 +646,12 @@ export const storageFields: INodeProperties[] = [
 			},
 		},
 		default: true,
-		description: 'Enable bucket',
+		description: 'Whether to enable bucket',
 	},
 	{
 		displayName: 'Maximum File Size',
 		name: 'maximumFileSize',
 		type: 'number',
-		required: false,
 		displayOptions: {
 			show: {
 				operation: [
@@ -649,7 +669,6 @@ export const storageFields: INodeProperties[] = [
 		displayName: 'Allowed File Extensions',
 		name: 'allowedFileExtensions',
 		type: 'string',
-		required: false,
 		displayOptions: {
 			show: {
 				operation: [
@@ -661,13 +680,12 @@ export const storageFields: INodeProperties[] = [
 			},
 		},
 		default: '',
-		description: 'Allowed file extensions, comma separated',
+		description: 'Allowed file extensions, comma-separated',
 	},
 	{
 		displayName: 'Compression',
 		name: 'compression',
 		type: 'options',
-		required: false,
 		displayOptions: {
 			show: {
 				operation: [
@@ -680,69 +698,19 @@ export const storageFields: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'None',
-				value: '',
-				description: 'No compression',
-			},
-			{
-				name: 'Tar',
-				value: 'tar',
-				description: 'Tar compression',
-			},
-			{
 				name: 'Gzip',
 				value: 'gzip',
 				description: 'Gzip compression',
 			},
 			{
-				name: 'Bzip',
-				value: 'bzip',
-				description: 'Bzip compression',
+				name: 'None',
+				value: '',
+				description: 'No compression',
 			},
 			{
-				name: 'Bzip2',
-				value: 'bzip2',
-				description: 'Bzip2 compression',
-			},
-			{
-				name: 'Xz',
-				value: 'xz',
-				description: 'Xz compression',
-			},
-			{
-				name: 'Z',
-				value: 'z',
-				description: 'Z compression',
-			},
-			{
-				name: '7z',
-				value: '7z',
-				description: '7z compression',
-			},
-			{
-				name: 'Tar Bzip2',
-				value: 'tar.bz2',
-				description: 'Tar Bzip2 compression',
-			},
-			{
-				name: 'Tar Gzip',
-				value: 'tar.gz',
-				description: 'Tar Gzip compression',
-			},
-			{
-				name: 'Tar Xz',
-				value: 'tar.xz',
-				description: 'Tar Xz compression',
-			},
-			{
-				name: 'Tar Z',
-				value: 'tar.Z',
-				description: 'Tar Z compression',
-			},
-			{
-				name: 'Tar 7z',
-				value: 'tar.7z',
-				description: 'Tar 7z compression',
+				name: 'Zstd',
+				value: 'zstd',
+				description: 'Zstd compression',
 			},
 		],
 		default: '',
@@ -752,7 +720,6 @@ export const storageFields: INodeProperties[] = [
 		displayName: 'Encryption',
 		name: 'encryption',
 		type: 'boolean',
-		required: false,
 		displayOptions: {
 			show: {
 				operation: [
@@ -764,13 +731,12 @@ export const storageFields: INodeProperties[] = [
 			},
 		},
 		default: false,
-		description: 'Enable encryption on bucket',
+		description: 'Whether to enable encryption on bucket',
 	},
 	{
 		displayName: 'Antivirus',
 		name: 'antivirus',
 		type: 'boolean',
-		required: false,
 		displayOptions: {
 			show: {
 				operation: [
@@ -782,6 +748,6 @@ export const storageFields: INodeProperties[] = [
 			},
 		},
 		default: false,
-		description: 'Enable antivirus on bucket',
+		description: 'Whether to enable antivirus on bucket',
 	},
 ];

@@ -28,21 +28,25 @@
 
 ## How to install
 
+For most, you'll install by simply going to your n8n instance, Settings -> Community Nodes, and then add
+this package name `n8n-nodes-appwrite-1.4.x`
+
 To get started install the package in your n8n root directory with
 
-`npm install n8n-nodes-appwrite`
+`npm install n8n-nodes-appwrite-1.4.x`
 
 
 For docker add the following line before the font installation command in your [n8n Docker file](https://github.com/n8n-io/n8n/blob/master/docker/images/n8n/Dockerfile)
-
-
 `RUN cd /usr/local/lib/node_modules/n8n && npm install n8n-nodes-appwrite`
+
+For existing N8N Installations simply go to Settings -> Community Packages and input `n8n-appwrite`
 
 ## 🔗 Connect with me
 
-[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/saad-mujeeb-b730a860)
+[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/zachhandley)
 
-[![twitter](https://img.shields.io/badge/twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/SaadMMujeeb)
+[My Website](https://zachhandley.com)
+
 
 ## License
 
