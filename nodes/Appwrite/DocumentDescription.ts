@@ -1,6 +1,4 @@
-import {
-	INodeProperties,
-} from 'n8n-workflow';
+import { INodeProperties } from "n8n-workflow";
 
 export const documentOperations: INodeProperties[] = [
 	{
@@ -55,111 +53,6 @@ export const documentOperations: INodeProperties[] = [
 		default: 'getAllDocs',
 	},
 ];
-
-export const functionOperations: INodeProperties[] = [
-	{
-		displayName: 'Options',
-		name: 'option',
-		noDataExpression: true,
-		type: 'options',
-		displayOptions: {
-			show: {
-				resource: [
-					'function',
-				],
-			},
-		},
-		options: [
-			{
-				name: 'List Functions',
-				displayName: "List Functions",
-				value: 'listFunctions',
-				action: 'List Functions',
-				description: 'List Functions in the current project',
-			},
-			{
-				name: 'Execute Function',
-				displayName: "Execute Function",
-				value: 'executeFunction',
-				action: 'Execute Function',
-				description: 'Execute a given function and output its result',
-			},
-		],
-		default: 'executeFunction',
-	},
-];
-
-export const storageOperations: INodeProperties[] = [
-
-	{
-		displayName: 'Options',
-		name: 'option',
-		noDataExpression: true,
-		type: 'options',
-		displayOptions: {
-			show: {
-				resource: [
-					'storage',
-				],
-			},
-		},
-		options: [
-			{
-				name: 'List Buckets',
-				displayName: "List Buckets",
-				value: 'listBuckets',
-				action: 'List Storage Buckets',
-				description: 'List your Storage Buckets in the current project',
-			},
-			{
-				name: 'List Files',
-				displayName: "List Files",
-				value: 'listFiles',
-				action: 'List Files in Bucket',
-				description: 'List files in a given bucket',
-			},
-			{
-				name: 'Get File',
-				displayName: "Get File",
-				value: 'getFile',
-				action: 'Get a File from Bucket by ID',
-				description: 'Get a file from a given bucket',
-			},
-			{
-				name: 'Create File',
-				displayName: "Create Files",
-				value: 'createFile',
-				action: 'Create a File in Bucket',
-				description: 'Create a file in a given bucket',
-			},
-			{
-				name: 'Create Bucket',
-				displayName: "Create Bucket",
-				value: 'createBucket',
-				action: 'Create a Storage Bucket',
-				description: 'Create a bucket in the current project',
-			},
-			{
-				name: 'Delete File',
-				displayName: "Delete File",
-				value: 'deleteFile',
-				action: 'Delete a File from Bucket by ID',
-				description: 'Delete a file from a given bucket',
-			},
-			{
-				name: 'Delete Bucket',
-				displayName: "Delete Bucket",
-				value: 'deleteBucket',
-				action: 'Delete a Storage Bucket',
-				description: 'Delete a bucket from the current project',
-			},
-		],
-		default: 'listFiles',
-	},
-];
-
-// 'function',
-// 'storage',
 
 export const documentFields: INodeProperties[] = [
 	{
@@ -258,7 +151,7 @@ export const documentFields: INodeProperties[] = [
 		typeOptions: {
 			multipleValues: true,
 		},
-		default: '',
+		default: {},
 		displayOptions: {
 			show: {
 				operation: [
@@ -313,29 +206,29 @@ export const documentFields: INodeProperties[] = [
 				default: 'equal',
 				options: [
 					{
-						name: 'Select',
-						value: 'select',
-						description: 'Select which attributes should be returned from a document',
+						name: 'Between',
+						value: 'between',
+						description: 'Returns document if attribute value falls between the two values. The boundary values are inclusive and can be strings or numbers.',
+					},
+					{
+						name: 'Cursor After',
+						value: 'cursor_after',
+						description: 'Places the cursor after the specified resource ID. Used for pagination.',
+					},
+					{
+						name: 'Cursor Before',
+						value: 'cursor_before',
+						description: 'Places the cursor before the specified resource ID. Used for pagination.',
+					},
+					{
+						name: 'Ends With',
+						value: 'ends_with',
+						description: 'Returns documents if a string attributes ends with a substring',
 					},
 					{
 						name: 'Equal',
 						value: 'equal',
 						description: 'Returns document if attribute is equal to any value in the provided array',
-					},
-					{
-						name: 'Not Equal',
-						value: 'not_equal',
-						description: 'Returns document if attribute is not equal to any value in the provided array',
-					},
-					{
-						name: 'Less Than',
-						value: 'less_than',
-						description: 'Returns document if attribute is less than the provided value',
-					},
-					{
-						name: 'Less Than or Equal',
-						value: 'less_than_or_equal',
-						description: 'Returns document if attribute is less than or equal to the provided value',
 					},
 					{
 						name: 'Greater Than',
@@ -348,9 +241,9 @@ export const documentFields: INodeProperties[] = [
 						description: 'Returns document if attribute is greater than or equal to the provided value',
 					},
 					{
-						name: 'Between',
-						value: 'between',
-						description: 'Returns document if attribute value falls between the two values. The boundary values are inclusive and can be strings or numbers.',
+						name: 'Is Not Null',
+						value: 'is_not_null',
+						description: 'Returns documents where attribute value is not null',
 					},
 					{
 						name: 'Is Null',
@@ -358,34 +251,14 @@ export const documentFields: INodeProperties[] = [
 						description: 'Returns documents where attribute value is null',
 					},
 					{
-						name: 'Is Not Null',
-						value: 'is_not_null',
-						description: 'Returns documents where attribute value is not null',
+						name: 'Less Than',
+						value: 'less_than',
+						description: 'Returns document if attribute is less than the provided value',
 					},
 					{
-						name: 'Starts With',
-						value: 'starts_with',
-						description: 'Returns documents if a string attributes starts with a substring',
-					},
-					{
-						name: 'Ends With',
-						value: 'ends_with',
-						description: 'Returns documents if a string attributes ends with a substring',
-					},
-					{
-						name: 'Search',
-						value: 'search',
-						description: 'Searches string attributes for provided keywords. Requires a Full-text index on queried attributes.',
-					},
-					{
-						name: 'Order Descending',
-						value: 'order_descending',
-						description: 'Orders results in descending order by attribute. Attribute must be indexed. Pass in an empty string to return in natural order.',
-					},
-					{
-						name: 'Order Ascending',
-						value: 'order_ascending',
-						description: 'Orders results in ascending order by attribute. Attribute must be indexed. Pass in an empty string to return in natural order.',
+						name: 'Less Than or Equal',
+						value: 'less_than_or_equal',
+						description: 'Returns document if attribute is less than or equal to the provided value',
 					},
 					{
 						name: 'Limit',
@@ -393,342 +266,42 @@ export const documentFields: INodeProperties[] = [
 						description: 'Limits the number of results returned by the query. Used for pagination. If the limit query is not used, the limit defaults to 25 results.',
 					},
 					{
+						name: 'Not Equal',
+						value: 'not_equal',
+						description: 'Returns document if attribute is not equal to any value in the provided array',
+					},
+					{
 						name: 'Offset',
 						value: 'offset',
 						description: 'Offset the results returned by skipping some of the results. Used for pagination.',
 					},
 					{
-						name: 'Cursor After',
-						value: 'cursor_after',
-						description: 'Places the cursor after the specified resource ID. Used for pagination.',
+						name: 'Order Ascending',
+						value: 'order_ascending',
+						description: 'Orders results in ascending order by attribute. Attribute must be indexed. Pass in an empty string to return in natural order.',
 					},
 					{
-						name: 'Cursor Before',
-						value: 'cursor_before',
-						description: 'Places the cursor before the specified resource ID. Used for pagination.',
+						name: 'Order Descending',
+						value: 'order_descending',
+						description: 'Orders results in descending order by attribute. Attribute must be indexed. Pass in an empty string to return in natural order.',
+					},
+					{
+						name: 'Search',
+						value: 'search',
+						description: 'Searches string attributes for provided keywords. Requires a Full-text index on queried attributes.',
+					},
+					{
+						name: 'Select',
+						value: 'select',
+						description: 'Select which attributes should be returned from a document',
+					},
+					{
+						name: 'Starts With',
+						value: 'starts_with',
+						description: 'Returns documents if a string attributes starts with a substring',
 					},
 				],
 			},
 		],
-	},
-];
-
-export const functionFields: INodeProperties[] = [
-	{
-		displayName: 'Function ID',
-		name: 'functionId',
-		type: 'string',
-		required: true,
-		displayOptions: {
-			show: {
-				operation: [
-					'executeFunction',
-				],
-				resource: [
-					'function',
-				],
-			},
-		},
-		default: '',
-		description: 'Function ID to execute',
-	},
-	{
-		displayName: 'Data',
-		name: 'data',
-		type: 'json',
-		displayOptions: {
-			show: {
-				operation: [
-					'executeFunction',
-				],
-				resource: [
-					'function',
-				],
-			},
-		},
-		default: '',
-		requiresDataPath: 'multiple',
-		description: 'Data to send to function',
-	},
-];
-
-export const storageFields: INodeProperties[] = [
-	{
-		displayName: 'Bucket ID',
-		name: 'bucketId',
-		type: 'string',
-		required: true,
-		displayOptions: {
-			show: {
-				operation: [
-					'listFiles',
-					'getFile',
-					'createFile',
-					'deleteFile',
-				],
-				resource: [
-					'storage',
-				],
-			},
-		},
-		default: '',
-		description: 'Bucket ID to perform operation on',
-	},
-	{
-		displayName: 'File ID',
-		name: 'fileId',
-		type: 'string',
-		displayOptions: {
-			show: {
-				operation: [
-					'getFile',
-					'deleteFile',
-				],
-				resource: [
-					'storage',
-				],
-			},
-		},
-		default: '',
-		description: 'File ID to perform operation on',
-	},
-	{
-		displayName: 'File Name',
-		name: 'fileName',
-		type: 'string',
-		displayOptions: {
-			show: {
-				operation: [
-					'createFile',
-				],
-				resource: [
-					'storage',
-				],
-			},
-		},
-		default: '',
-		description: 'File name to create',
-	},
-	{
-		displayName: 'File',
-		name: 'file',
-		type: 'string',
-		displayOptions: {
-			show: {
-				operation: [
-					'createFile',
-				],
-				resource: [
-					'storage',
-				],
-			},
-		},
-		default: '',
-		description: 'File to upload',
-	},
-	{
-		displayName: 'Mime Type',
-		name: 'mimeType',
-		type: 'string',
-		displayOptions: {
-			show: {
-				operation: [
-					'createFile',
-				],
-				resource: [
-					'storage',
-				],
-			},
-		},
-		default: '',
-		description: 'Mime type of file to upload',
-	},
-	{
-		displayName: 'Name',
-		name: 'name',
-		type: 'string',
-		displayOptions: {
-			show: {
-				operation: [
-					'createBucket',
-				],
-				resource: [
-					'storage',
-				],
-			},
-		},
-
-		default: '',
-		description: 'Name of bucket to create',
-	},
-	{
-		displayName: 'Permissions',
-		name: 'permissions',
-		type: 'multiOptions',
-		displayOptions: {
-			show: {
-				operation: [
-					'createBucket',
-				],
-				resource: [
-					'storage',
-				],
-			},
-		},
-		options: [
-			{
-				name: 'Read',
-				value: 'read',
-				description: 'Read from bucket',
-			},
-			{
-				name: 'Write',
-				value: 'write',
-				description: 'Write to bucket',
-			},
-			{
-				name: 'Delete',
-				value: 'delete',
-				description: 'Delete from bucket',
-			},
-		],
-		default: [],
-		description: 'Permissions to set on bucket',
-	},
-	{
-		displayName: 'File Security',
-		name: 'fileSecurity',
-		type: 'boolean',
-		displayOptions: {
-			show: {
-				operation: [
-					'createBucket',
-				],
-				resource: [
-					'storage',
-				],
-			},
-		},
-		default: false,
-		description: 'Whether to enable file security on bucket',
-	},
-	{
-		displayName: 'Enabled',
-		name: 'enabled',
-		type: 'boolean',
-		displayOptions: {
-			show: {
-				operation: [
-					'createBucket',
-				],
-				resource: [
-					'storage',
-				],
-			},
-		},
-		default: true,
-		description: 'Whether to enable bucket',
-	},
-	{
-		displayName: 'Maximum File Size',
-		name: 'maximumFileSize',
-		type: 'number',
-		displayOptions: {
-			show: {
-				operation: [
-					'createBucket',
-				],
-				resource: [
-					'storage',
-				],
-			},
-		},
-		default: 0,
-		description: 'Maximum file size in bytes',
-	},
-	{
-		displayName: 'Allowed File Extensions',
-		name: 'allowedFileExtensions',
-		type: 'string',
-		displayOptions: {
-			show: {
-				operation: [
-					'createBucket',
-				],
-				resource: [
-					'storage',
-				],
-			},
-		},
-		default: '',
-		description: 'Allowed file extensions, comma-separated',
-	},
-	{
-		displayName: 'Compression',
-		name: 'compression',
-		type: 'options',
-		displayOptions: {
-			show: {
-				operation: [
-					'createBucket',
-				],
-				resource: [
-					'storage',
-				],
-			},
-		},
-		options: [
-			{
-				name: 'Gzip',
-				value: 'gzip',
-				description: 'Gzip compression',
-			},
-			{
-				name: 'None',
-				value: '',
-				description: 'No compression',
-			},
-			{
-				name: 'Zstd',
-				value: 'zstd',
-				description: 'Zstd compression',
-			},
-		],
-		default: '',
-		description: 'Compression to use on bucket',
-	},
-	{
-		displayName: 'Encryption',
-		name: 'encryption',
-		type: 'boolean',
-		displayOptions: {
-			show: {
-				operation: [
-					'createBucket',
-				],
-				resource: [
-					'storage',
-				],
-			},
-		},
-		default: false,
-		description: 'Whether to enable encryption on bucket',
-	},
-	{
-		displayName: 'Antivirus',
-		name: 'antivirus',
-		type: 'boolean',
-		displayOptions: {
-			show: {
-				operation: [
-					'createBucket',
-				],
-				resource: [
-					'storage',
-				],
-			},
-		},
-		default: false,
-		description: 'Whether to enable antivirus on bucket',
 	},
 ];

@@ -7,8 +7,7 @@ import {
 export class AppwriteApi implements ICredentialType {
 	name = 'appwriteApi';
 	displayName = 'Appwrite API';
-	documentationUrl = 'https://appwrite.io';
-	icon = 'file:Appwrite.svg';
+	documentationUrl = 'https://appwrite.io/';
 	properties: INodeProperties[] = [
 		{
 			displayName: 'Appwrite Server URL',
@@ -31,6 +30,11 @@ export class AppwriteApi implements ICredentialType {
 			default: '',
 		},
 	];
+
+	// This allows the credential to be used by other parts of n8n
+	// stating how this credential is injected as part of the request
+	// An example is the Http Request node that can make generic calls
+	// reusing this credential
 	authenticate: IAuthenticate = {
 		type: 'generic',
 		properties: {
