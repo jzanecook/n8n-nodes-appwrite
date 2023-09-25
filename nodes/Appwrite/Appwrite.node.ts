@@ -8,46 +8,41 @@ import {
 	NodeExecutionWithMetadata,
 } from 'n8n-workflow';
 
-import {
-	documentOperations,
-	documentFields,
-} from "./DocumentDescription"
-import {
-	storageOperations,
-	storageFields,
-} from "./StorageDescription"
-import {
-	functionOperations,
-	functionFields,
-} from "./FunctionDescription"
-import { convertStringToQuery, createAppwriteDocument, createAppwriteStorageBucket, createAppwriteStorageFile, deleteAppwriteDocument, deleteAppwriteStorageBucket, deleteAppwriteStorageFile, getAppwriteClient, getAppwriteDocument, getAppwriteStorageFile, listAppwriteBuckets, listAppwriteDocuments, listAppwriteFunctions, listAppwriteStorage, runAppwriteFunction, updateAppwriteDocument } from './AppwriteFunctions';
+// import {
+// 	documentOperations,
+// 	documentFields,
+// } from "./DocumentDescription"
+// import {
+// 	storageOperations,
+// 	storageFields,
+// } from "./StorageDescription"
+// import {
+// 	functionOperations,
+// 	functionFields,
+// } from "./FunctionDescription"
+import { convertStringToQuery, createAppwriteDocument, createAppwriteStorageBucket, createAppwriteStorageFile, deleteAppwriteDocument, deleteAppwriteStorageBucket, deleteAppwriteStorageFile, getAppwriteClient, getAppwriteDocument, getAppwriteFunction, getAppwriteStorageFile, listAppwriteBuckets, listAppwriteDocuments, listAppwriteFunctions, listAppwriteStorage, runAppwriteFunction, updateAppwriteDocument } from './AppwriteFunctions';
 import { ID } from 'node-appwrite';
 
 export class Appwrite implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Appwrite',
 		name: 'appwrite',
-		group: [],
+		icon: 'file:Appwrite.svg',
+		group: ['transform'],
 		version: 1,
 		subtitle: '={{ $parameter["operation"] + ": " + $parameter["resource"] }}',
 		description: "Use Appwrite's API from inside N8N, updated by @ZachHandley",
-		icon: 'file:Appwrite.svg',
 		defaults: {
 			name: 'Appwrite',
 		},
 		inputs: ['main'],
 		outputs: ['main'],
-		/**
-		 * In the properties array we have two mandatory options objects required
-		 *
-		 * [Resource & Operation]
-		 *
-		 * https://docs.n8n.io/integrations/creating-nodes/code/create-first-node/#resources-and-operations
-		 *
-		 * In our example, the operations are separated into their own file (HTTPVerbDescription.ts)
-		 * to keep this class easy to read.
-		 *
-		 */
+		credentials: [
+			{
+				name: "appwriteApi",
+				required: true,
+			},
+		],
 		properties: [
 			{
 				displayName: 'Resource',
@@ -59,24 +54,107 @@ export class Appwrite implements INodeType {
 						name: 'Document',
 						value: 'document',
 					},
-					{
-						name: 'Function',
-						value: 'function',
-					},
-					{
-						name: 'Storage',
-						value: 'storage',
-					},
+					// {
+					// 	name: 'Function',
+					// 	value: 'function',
+					// },
+					// {
+					// 	name: 'Storage',
+					// 	value: 'storage',
+					// },
 				],
 				default: 'document',
 				description: 'Resource or operation to utilize',
 			},
-			...documentOperations,
-			...storageOperations,
-			...functionOperations,
-			...documentFields,
-			...storageFields,
-			...functionFields,
+			{
+				displayName: 'Operation',
+				name: 'operation',
+				noDataExpression: true,
+				type: 'options',
+				displayOptions: {
+					show: {
+						resource: ['document'],
+					}
+				},
+				default: 'createDoc',
+				options: [
+					{
+						name: 'Create',
+						value: 'createDoc',
+						action: 'Create document',
+					},
+					{
+						name: 'Delete',
+						value: 'deleteDoc',
+						action: 'Delete document',
+					},
+				],
+			},
+			{
+				displayName: 'Database ID',
+				name: 'databaseId',
+				type: 'string',
+				required: true,
+				default: '',
+				// requiresDataPath: 'single',
+				description: 'Database ID in which transaction will be performed',
+				displayOptions: {
+					show: {
+						resource: [
+							'document'
+						],
+						operation: [
+							'createDoc',
+							'deleteDoc',
+						],
+					},
+				},
+			},
+			{
+				displayName: 'Collection ID',
+				name: 'collectionId',
+				type: 'string',
+				required: true,
+				default: '',
+				// requiresDataPath: 'single',
+				description: 'Collection to list/create documents in',
+				displayOptions: {
+					show: {
+						resource: [
+							'document'
+						],
+						operation: [
+							'createDoc',
+							'deleteDoc',
+						],
+					},
+				},
+			},
+			{
+				displayName: 'Document ID',
+				name: 'documentId',
+				type: 'string',
+				default: 'unique',
+				// requiresDataPath: 'single',
+				description: 'ID for collection | For creating, unique is used for generating unique ID, it can be modified for custom document ID',
+				displayOptions: {
+					show: {
+						resource: [
+							'document'
+						],
+						operation: [
+							'createDoc',
+							'deleteDoc',
+						],
+					},
+				},
+			},
+			// ...documentOperations,
+			// ...documentFields,
+			// ...storageOperations,
+			// ...storageFields,
+			// ...functionOperations,
+			// ...functionFields,
 		],
 	};
 
@@ -86,21 +164,23 @@ export class Appwrite implements INodeType {
 	// You can make async calls and use `await`.
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][] | NodeExecutionWithMetadata[][] | null> {
 		const returnData: IDataObject[] = [];
+		console.log("INSIDE EXECUTE!");
 
 		let responseData;
 		const resource = this.getNodeParameter('resource', 0) as string;
 		const operation = this.getNodeParameter('operation', 0) as string;
-		const credentials = await this.getCredentials('appwriteApi') as IDataObject;
-		const appwriteClient = await getAppwriteClient(`${credentials.url}`, `${credentials.projectId}`, `${credentials.apiKey}`);
+		const { url, projectId, apiKey } = await this.getCredentials('appwriteApi') as { url: string, projectId: string, apiKey: string };
+		const appwriteClient = await getAppwriteClient(url, projectId, apiKey);
+		console.log("Got appwrite client");
 		try {
 			if (resource === 'document') {
+				// get databaseId input
+				const databaseId = this.getNodeParameter('databaseId', 0) as string;
+				const collectionId = this.getNodeParameter('collectionId', 0) as string;
 
 				if (operation === 'createDoc') {
-					// get databaseId input
-					const databaseId = this.getNodeParameter('databaseId', 0) as string;
 
 					// get collectionID input
-					const collectionId = this.getNodeParameter('collectionId', 0) as string;
 					const docId = this.getNodeParameter('documentId', 0) as string;
 					let body: IDataObject;
 					let documentId: string;
@@ -121,13 +201,8 @@ export class Appwrite implements INodeType {
 				}
 
 				if (operation === 'getAllDocs') {
-					// get databaseId input
-					const databaseId = this.getNodeParameter('databaseId', 0) as string;
-
-					// get collectionID input
-					const collectionId = this.getNodeParameter('collectionId', 0) as string;
 					// get additional fields input
-					const optionalFields = this.getNodeParameter('queries', 0) as IDataObject;
+					const optionalFields = this.getNodeParameter('additionalFields', 0) as IDataObject;
 					const queriesToSend: string[] = []
 
 					if (optionalFields.options) {
@@ -144,15 +219,9 @@ export class Appwrite implements INodeType {
 				}
 
 				if (operation === 'getDoc') {
-
-					// get databaseId input
-					const databaseId = this.getNodeParameter('databaseId', 0) as string;
-
-					// get collectionID input
-					const collectionId = this.getNodeParameter('collectionId', 0) as string;
 					// get documentID input
 					const documentId = this.getNodeParameter('documentId', 0) as string;
-					const optionalFields = this.getNodeParameter('queries', 0) as IDataObject;
+					const optionalFields = this.getNodeParameter('additionalFields', 0) as IDataObject;
 					const queriesToSend: string[] = []
 
 					if (optionalFields.options) {
@@ -170,11 +239,6 @@ export class Appwrite implements INodeType {
 				}
 
 				if (operation === 'updateDoc') {
-					// get databaseId input
-					const databaseId = this.getNodeParameter('databaseId', 0) as string;
-
-					// get collectionID input
-					const collectionId = this.getNodeParameter('collectionId', 0) as string;
 					// get documentID input
 					const documentId = this.getNodeParameter('documentId', 0) as string;
 
@@ -187,11 +251,6 @@ export class Appwrite implements INodeType {
 				}
 
 				if (operation === 'deleteDoc') {
-					// get databaseId input
-					const databaseId = this.getNodeParameter('databaseId', 0) as string;
-
-					// get collectionID input
-					const collectionId = this.getNodeParameter('collectionId', 0) as string;
 					// get documentID input
 					const documentId = this.getNodeParameter('documentId', 0) as string;
 
@@ -203,6 +262,10 @@ export class Appwrite implements INodeType {
 					responseData = await listAppwriteFunctions(appwriteClient);
 					returnData.push(responseData);
 				} else if (operation === 'getFunction') {
+					const functionId = this.getNodeParameter('functionId', 0) as string;
+					responseData = await getAppwriteFunction(appwriteClient, functionId);
+					returnData.push(responseData);
+				} else if (operation === 'executeFunction') {
 					const functionId = this.getNodeParameter('functionId', 0) as string;
 					const data = this.getNodeParameter('data', 0) as IDataObject;
 					responseData = await runAppwriteFunction(appwriteClient, functionId, data);

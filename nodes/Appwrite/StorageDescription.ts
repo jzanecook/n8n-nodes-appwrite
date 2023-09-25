@@ -2,9 +2,10 @@ import { INodeProperties } from "n8n-workflow";
 
 export const storageOperations: INodeProperties[] = [
 	{
-		displayName: 'Options',
-		name: 'option',
+		displayName: 'Operation',
+		name: 'operation',
 		noDataExpression: true,
+		required: true,
 		type: 'options',
 		displayOptions: {
 			show: {
@@ -16,51 +17,44 @@ export const storageOperations: INodeProperties[] = [
 		options: [
 			{
 				name: 'Create Bucket',
-				displayName: "Create Bucket",
 				value: 'createBucket',
-				action: 'Create a Storage Bucket',
+				action: 'Create a storage bucket',
 				description: 'Create a bucket in the current project',
 			},
 			{
 				name: 'Create File',
-				displayName: "Create Files",
 				value: 'createFile',
-				action: 'Create a File in Bucket',
+				action: 'Create a file in bucket',
 				description: 'Create a file in a given bucket',
 			},
 			{
 				name: 'Delete Bucket',
-				displayName: "Delete Bucket",
 				value: 'deleteBucket',
-				action: 'Delete a Storage Bucket',
+				action: 'Delete a storage bucket',
 				description: 'Delete a bucket from the current project',
 			},
 			{
 				name: 'Delete File',
-				displayName: "Delete File",
 				value: 'deleteFile',
-				action: 'Delete a File from Bucket by ID',
+				action: 'Delete a file from bucket by id',
 				description: 'Delete a file from a given bucket',
 			},
 			{
 				name: 'Get File',
-				displayName: "Get File",
 				value: 'getFile',
-				action: 'Get a File from Bucket by ID',
+				action: 'Get a file from bucket by id',
 				description: 'Get a file from a given bucket',
 			},
 			{
 				name: 'List Buckets',
-				displayName: "List Buckets",
 				value: 'listBuckets',
-				action: 'List Storage Buckets',
+				action: 'List storage buckets',
 				description: 'List your Storage Buckets in the current project',
 			},
 			{
 				name: 'List Files',
-				displayName: "List Files",
 				value: 'listFiles',
-				action: 'List Files in Bucket',
+				action: 'List files in bucket',
 				description: 'List files in a given bucket',
 			},
 		],
@@ -76,14 +70,15 @@ export const storageFields: INodeProperties[] = [
 		required: true,
 		displayOptions: {
 			show: {
+				resource: [
+					'storage',
+				],
 				operation: [
 					'listFiles',
 					'getFile',
 					'createFile',
 					'deleteFile',
-				],
-				resource: [
-					'storage',
+					'deleteBucket',
 				],
 			},
 		},
@@ -96,12 +91,12 @@ export const storageFields: INodeProperties[] = [
 		type: 'string',
 		displayOptions: {
 			show: {
+				resource: [
+					'storage',
+				],
 				operation: [
 					'getFile',
 					'deleteFile',
-				],
-				resource: [
-					'storage',
 				],
 			},
 		},
@@ -114,11 +109,11 @@ export const storageFields: INodeProperties[] = [
 		type: 'string',
 		displayOptions: {
 			show: {
-				operation: [
-					'createFile',
-				],
 				resource: [
 					'storage',
+				],
+				operation: [
+					'createFile',
 				],
 			},
 		},
@@ -131,11 +126,11 @@ export const storageFields: INodeProperties[] = [
 		type: 'string',
 		displayOptions: {
 			show: {
-				operation: [
-					'createFile',
-				],
 				resource: [
 					'storage',
+				],
+				operation: [
+					'createFile',
 				],
 			},
 		},
@@ -148,11 +143,11 @@ export const storageFields: INodeProperties[] = [
 		type: 'string',
 		displayOptions: {
 			show: {
-				operation: [
-					'createFile',
-				],
 				resource: [
 					'storage',
+				],
+				operation: [
+					'createFile',
 				],
 			},
 		},
@@ -165,11 +160,11 @@ export const storageFields: INodeProperties[] = [
 		type: 'string',
 		displayOptions: {
 			show: {
-				operation: [
-					'createBucket',
-				],
 				resource: [
 					'storage',
+				],
+				operation: [
+					'createBucket',
 				],
 			},
 		},
@@ -183,11 +178,11 @@ export const storageFields: INodeProperties[] = [
 		type: 'multiOptions',
 		displayOptions: {
 			show: {
-				operation: [
-					'createBucket',
-				],
 				resource: [
 					'storage',
+				],
+				operation: [
+					'createBucket',
 				],
 			},
 		},
@@ -217,11 +212,11 @@ export const storageFields: INodeProperties[] = [
 		type: 'boolean',
 		displayOptions: {
 			show: {
-				operation: [
-					'createBucket',
-				],
 				resource: [
 					'storage',
+				],
+				operation: [
+					'createBucket',
 				],
 			},
 		},
@@ -234,11 +229,11 @@ export const storageFields: INodeProperties[] = [
 		type: 'boolean',
 		displayOptions: {
 			show: {
-				operation: [
-					'createBucket',
-				],
 				resource: [
 					'storage',
+				],
+				operation: [
+					'createBucket',
 				],
 			},
 		},
@@ -251,11 +246,11 @@ export const storageFields: INodeProperties[] = [
 		type: 'number',
 		displayOptions: {
 			show: {
-				operation: [
-					'createBucket',
-				],
 				resource: [
 					'storage',
+				],
+				operation: [
+					'createBucket',
 				],
 			},
 		},
@@ -268,11 +263,11 @@ export const storageFields: INodeProperties[] = [
 		type: 'string',
 		displayOptions: {
 			show: {
-				operation: [
-					'createBucket',
-				],
 				resource: [
 					'storage',
+				],
+				operation: [
+					'createBucket',
 				],
 			},
 		},
@@ -285,11 +280,11 @@ export const storageFields: INodeProperties[] = [
 		type: 'options',
 		displayOptions: {
 			show: {
-				operation: [
-					'createBucket',
-				],
 				resource: [
 					'storage',
+				],
+				operation: [
+					'createBucket',
 				],
 			},
 		},
@@ -319,11 +314,11 @@ export const storageFields: INodeProperties[] = [
 		type: 'boolean',
 		displayOptions: {
 			show: {
-				operation: [
-					'createBucket',
-				],
 				resource: [
 					'storage',
+				],
+				operation: [
+					'createBucket',
 				],
 			},
 		},
@@ -336,11 +331,11 @@ export const storageFields: INodeProperties[] = [
 		type: 'boolean',
 		displayOptions: {
 			show: {
-				operation: [
-					'createBucket',
-				],
 				resource: [
 					'storage',
+				],
+				operation: [
+					'createBucket',
 				],
 			},
 		},

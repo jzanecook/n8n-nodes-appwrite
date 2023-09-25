@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-appwriten8n",
-  "version": "0.1.3",
+  "version": "0.2.8",
   "description": "N8N Nodes for Appwrite starting at 1.4.X and up, will be updated.",
   "keywords": [
     "n8n-community-node-package"

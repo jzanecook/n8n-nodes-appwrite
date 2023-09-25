@@ -20,34 +20,62 @@
     <br />
 </p>
 
-<p align="center">
-    <a href="https://n8n.io" target="_blank"><img width="600" height="" src="/n8n-appwrite-node.png" alt="appwrite-node"></a>
-    <br />
-    <br />
-</p>
+This is an n8n community node. It lets you use _Appwrite_ in your n8n workflows.
 
-## How to install
+[n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
 
-For most, you'll install by simply going to your n8n instance, Settings -> Community Nodes, and then add
-this package name `n8n-nodes-appwriten8n`
+[Installation](#installation)
+[Operations](#operations)
+[Credentials](#credentials)  <!-- delete if no auth needed -->
+[Compatibility](#compatibility)
+[Resources](#resources)
 
-To get started install the package in your n8n root directory with
+## Installation
 
-`npm install n8n-nodes-appwriten8n`
+Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
+
+## Operations
+
+- Documents
+  - Get (by ID or with Queries)
+  - Create
+  - Update
+  - Delete
+  - Get All (incl. with Queries)
+- Functions
+  - List All
+  - Get by ID
+  - Execute and Output Result
+- Storage
+  - Create Bucket
+  - Delete Bucket
+  - Get Bucket by ID
+  - List Buckets
+  - List Files
+  - Get File by ID
+  - Create File
+  - Delete File
+
+## Credentials
+
+1. Make sure you have an instance of Appwrite, either self-hosted or on Cloud at https://cloud.appwrite.io
+2. Once in, create a project, and then scroll down and create an API key
+3. Give it all securities you wish, only Functions, Databases, and Storage is required to use all functionality, however I will update it with more functionality as we go
+4. After creating your API key, go to Credentials and create a new Appwrite API credential, and paste in
+`https://cloud.appwrite.io/v1` for your endpoint URL if you used Appwrite Cloud, otherwise use your endpoint
+5. Put in your Project ID by copying it
+6. Paste in your API key
+7. You're good to go!
+
+## Compatibility
+
+- Currently up to date with N8N, Appwrite 1.4.x is required
+
+## Resources
+
+* [n8n community nodes documentation](https://docs.n8n.io/integrations/community-nodes/)
+* [appwrite website and documentation](https://appwrite.io)
+* [github repository](https://github.com/zachhandley/n8n-nodes-appwrite)
+* [my website](https://zachhandley.com)
 
 
-For docker add the following line before the font installation command in your [n8n Docker file](https://github.com/n8n-io/n8n/blob/master/docker/images/n8n/Dockerfile)
-`RUN cd /usr/local/lib/node_modules/n8n && npm install n8n-nodes-appwrite`
-
-For existing N8N Installations simply go to Settings -> Community Packages and input `n8n-appwrite`
-
-## 🔗 Connect with me
-
-[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/zachhandley)
-
-[My Website](https://zachhandley.com)
-
-
-## License
-
-[Apache 2.0 with Commons Clause](https://github.com/n8n-io/n8n/blob/master/packages/nodes-base/LICENSE.md)
