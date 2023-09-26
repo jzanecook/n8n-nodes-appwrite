@@ -55,6 +55,31 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
   - Get File by ID
   - Create File
   - Delete File
+- Users
+  - Get User
+  - Create User
+    - I will implement the hashing algorithms soon, but for now hashed users are disabled
+  - Update User
+    - Can update the following
+      - Name
+      - Email
+      - Email Verification Status (true or false)
+      - Password
+      - Phone
+      - Phone Verification Status (true or false)
+      - Labels
+      - Status
+  - Get User Prefs
+  - Update User Prefs
+  - List Users
+    - Filterable with Queries
+  - Delete User
+  - List User Sessions
+  - Delete User Sessions
+  - Delete User Session
+  - List User Memberships
+  - List User Logs
+  - List User Identities
 
 ## Credentials
 

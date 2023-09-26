@@ -1,5 +1,5 @@
 {
-	"node": "n8n-nodes-base.appwrite",
+	"node": "n8n-nodes-base.nappwrite",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
 	"categories": "Data & Storage",

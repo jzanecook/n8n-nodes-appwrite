@@ -1,6 +1,6 @@
 {
-  "name": "n8n-nodes-appwriten8n",
-  "version": "0.2.8",
+  "name": "n8n-nodes-nappwrite",
+  "version": "0.6.9",
   "description": "N8N Nodes for Appwrite starting at 1.4.X and up, will be updated.",
   "keywords": [
     "n8n-community-node-package"
@@ -30,10 +30,10 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "dist/credentials/AppwriteApi.credentials.js"
+      "dist/credentials/NAppwriteApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/Appwrite/Appwrite.node.js"
+      "dist/nodes/NAppwrite/NAppwrite.node.js"
     ]
   },
   "devDependencies": {

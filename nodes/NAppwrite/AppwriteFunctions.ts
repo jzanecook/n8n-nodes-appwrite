@@ -1,14 +1,156 @@
-import { Client, Databases, Functions, Storage, InputFile, Models, Query } from 'node-appwrite';
+import { Client, Databases, Functions, Storage, InputFile, Models, Query, Users, ID } from 'node-appwrite';
 
 export async function getAppwriteClient(endpoint: string, projectId: string, apiKey: string,): Promise<Client> {
 	const client = new Client().setEndpoint(endpoint).setProject(projectId).setKey(apiKey);
-	console.log("Appwrite client created");
 	return client;
 }
 
 export async function getAppwriteDatabase(client: Client, databaseId?: string): Promise<Databases> {
 	const database = new Databases(client);
 	return database;
+}
+
+export async function getAppwriteUsers(client: Client): Promise<Users> {
+	const users = new Users(client);
+	return users;
+}
+
+export async function listAppwriteUsers(client: Client, queries?: string[]): Promise<Models.UserList<Models.Preferences>> {
+	const users = new Users(client);
+	if (queries) {
+		return users.list(queries);
+	}
+	return users.list();
+}
+
+export async function createAppwriteUser(client: Client, id: string = ID.unique(), email: string, password: string, name?: string, phone?: string, userType?: 'AlgoArgon2' | 'AlgoBcrypt' | 'AlgoMd5' | 'AlgoPhpass' | 'AlgoScryptModified' | 'AlgoSha'): Promise<Models.User<Models.Preferences>> {
+	const users = new Users(client);
+	if (userType) {
+		//TODO: Implement this for all user types
+		let user: Models.User<Models.Preferences>;
+		switch (userType) {
+			case 'AlgoArgon2':
+				user = await users.createArgon2User(id, email, password, name);
+				if (phone) {
+					await users.updatePhone(user.$id, phone);
+				}
+				break;
+			case 'AlgoBcrypt':
+				user = await users.createBcryptUser(id, email, password, name);
+				if (phone) {
+					await users.updatePhone(user.$id, phone);
+				}
+				break;
+			case 'AlgoMd5':
+				user = await users.createMD5User(id, email, password, name);
+				if (phone) {
+					await users.updatePhone(user.$id, phone);
+				}
+				break;
+			case 'AlgoPhpass':
+				user = await users.createPHPassUser(id, email, password, name);
+				if (phone) {
+					await users.updatePhone(user.$id, phone);
+				}
+				break;
+			case 'AlgoSha':
+				user = await users.createSHAUser(id, email, password, name, phone);
+				if (phone) {
+					await users.updatePhone(user.$id, phone);
+				}
+				break;
+			default:
+				user = await users.create(id, email, password, name, phone);
+				if (phone) {
+					await users.updatePhone(user.$id, phone);
+				}
+				break;
+		}
+		return user;
+	} else {
+		const user = await users.create(id, email, password, name);
+		if (phone) {
+			await users.updatePhone(user.$id, phone);
+		}
+		return user;
+	}
+}
+
+export async function getAppwriteUser(client: Client, userId: string): Promise<Models.User<Models.Preferences>> {
+	const users = new Users(client);
+	return users.get(userId);
+}
+
+export async function updateAppwriteUser(client: Client, userId: string, email?: string, emailVerification?: boolean, name?: string, password?: string, newPassword?: string, prefs?: Models.Preferences, phone?: string, phoneVerification?: boolean, labels?: string[], status?: boolean): Promise<Models.User<Models.Preferences>> {
+	const users = new Users(client);
+	if (email) {
+		await users.updateEmail(userId, email);
+	}
+	if (name) {
+		await users.updateName(userId, name);
+	}
+	if (password && newPassword) {
+		await users.updatePassword(userId, newPassword);
+	}
+	if (prefs) {
+		await users.updatePrefs(userId, prefs);
+	}
+	if (phone) {
+		await users.updatePhone(userId, phone);
+	}
+	if (phoneVerification) {
+		await users.updatePhoneVerification(userId, phoneVerification);
+	}
+	if (emailVerification) {
+		await users.updateEmailVerification(userId, emailVerification);
+	}
+	if (labels) {
+		await users.updateLabels(userId, labels);
+	}
+	if (status) {
+		await users.updateStatus(userId, status);
+	}
+	return getAppwriteUser(client, userId);
+}
+
+export async function deleteAppwriteUser(client: Client, userId: string): Promise<string> {
+	const users = new Users(client);
+	return users.delete(userId);
+}
+
+export async function deleteAppwriteUserSession(client: Client, userId: string, sessionId: string): Promise<string> {
+	const users = new Users(client);
+	return users.deleteSession(userId, sessionId);
+}
+
+export async function deleteAppwriteUserSessions(client: Client, userId: string): Promise<string> {
+	const users = new Users(client);
+	return users.deleteSessions(userId);
+}
+
+export async function getAppwriteUserPrefs(client: Client, userId: string): Promise<Models.Preferences> {
+	const users = new Users(client);
+	return users.getPrefs(userId);
+}
+
+export async function listAppwriteUserSessions(client: Client, userId: string): Promise<Models.SessionList> {
+	const users = new Users(client);
+	return users.listSessions(userId);
+}
+
+export async function listAppwriteUserIdentities(client: Client, userId: string): Promise<Models.IdentityList> {
+	const users = new Users(client);
+	return users.listIdentities(userId);
+}
+
+export async function listAppwriteUserLogs(client: Client, userId: string): Promise<Models.LogList> {
+	const users = new Users(client);
+	return users.listLogs(userId);
+}
+
+export async function listAppwriteUserMemberships(client: Client, userId: string): Promise<Models.MembershipList> {
+	const users = new Users(client);
+	return users.listMemberships(userId);
 }
 
 export async function listAppwriteDatabases(client: Client): Promise<Models.DatabaseList> {
@@ -49,6 +191,7 @@ export async function listAppwriteDocuments(client: Client, databaseId: string, 
 
 export async function createAppwriteDocument(client: Client, databaseId: string, collectionId: string, documentId: string, data: any): Promise<Models.Document> {
 	const database = await getAppwriteDatabase(client);
+	console.log("Inside creation function, function data received: ", data);
 	return database.createDocument(databaseId, collectionId, documentId, data);
 }
 

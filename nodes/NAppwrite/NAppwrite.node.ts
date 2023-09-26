@@ -8,25 +8,29 @@ import {
 	NodeExecutionWithMetadata,
 } from 'n8n-workflow';
 
-// import {
-// 	documentOperations,
-// 	documentFields,
-// } from "./DocumentDescription"
-// import {
-// 	storageOperations,
-// 	storageFields,
-// } from "./StorageDescription"
-// import {
-// 	functionOperations,
-// 	functionFields,
-// } from "./FunctionDescription"
-import { convertStringToQuery, createAppwriteDocument, createAppwriteStorageBucket, createAppwriteStorageFile, deleteAppwriteDocument, deleteAppwriteStorageBucket, deleteAppwriteStorageFile, getAppwriteClient, getAppwriteDocument, getAppwriteFunction, getAppwriteStorageFile, listAppwriteBuckets, listAppwriteDocuments, listAppwriteFunctions, listAppwriteStorage, runAppwriteFunction, updateAppwriteDocument } from './AppwriteFunctions';
+import {
+	documentOperations,
+	documentFields,
+} from "./DocumentDescription"
+import {
+	storageOperations,
+	storageFields,
+} from "./StorageDescription"
+import {
+	functionOperations,
+	functionFields,
+} from "./FunctionDescription"
+import {
+	usersOperations,
+	usersFields,
+} from "./UsersDescription"
+import { convertStringToQuery, createAppwriteDocument, createAppwriteStorageBucket, createAppwriteStorageFile, createAppwriteUser, deleteAppwriteDocument, deleteAppwriteStorageBucket, deleteAppwriteStorageFile, deleteAppwriteUser, deleteAppwriteUserSession, deleteAppwriteUserSessions, getAppwriteClient, getAppwriteDocument, getAppwriteFunction, getAppwriteStorageFile, getAppwriteUser, getAppwriteUserPrefs, listAppwriteBuckets, listAppwriteDocuments, listAppwriteFunctions, listAppwriteStorage, listAppwriteUserIdentities, listAppwriteUserLogs, listAppwriteUserMemberships, listAppwriteUserSessions, listAppwriteUsers, runAppwriteFunction, updateAppwriteDocument, updateAppwriteUser } from './AppwriteFunctions';
 import { ID } from 'node-appwrite';
 
-export class Appwrite implements INodeType {
+export class NAppwrite implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Appwrite',
-		name: 'appwrite',
+		displayName: 'NAppwrite',
+		name: 'nAppwrite',
 		icon: 'file:Appwrite.svg',
 		group: ['transform'],
 		version: 1,
@@ -39,7 +43,7 @@ export class Appwrite implements INodeType {
 		outputs: ['main'],
 		credentials: [
 			{
-				name: "appwriteApi",
+				name: "nAppwriteApi",
 				required: true,
 			},
 		],
@@ -54,124 +58,45 @@ export class Appwrite implements INodeType {
 						name: 'Document',
 						value: 'document',
 					},
-					// {
-					// 	name: 'Function',
-					// 	value: 'function',
-					// },
-					// {
-					// 	name: 'Storage',
-					// 	value: 'storage',
-					// },
+					{
+						name: 'Function',
+						value: 'function',
+					},
+					{
+						name: 'Storage',
+						value: 'storage',
+					},
+					{
+						// eslint-disable-next-line n8n-nodes-base/node-param-resource-with-plural-option
+						name: 'Users',
+						value: 'users',
+					},
 				],
 				default: 'document',
 				description: 'Resource or operation to utilize',
 			},
-			{
-				displayName: 'Operation',
-				name: 'operation',
-				noDataExpression: true,
-				type: 'options',
-				displayOptions: {
-					show: {
-						resource: ['document'],
-					}
-				},
-				default: 'createDoc',
-				options: [
-					{
-						name: 'Create',
-						value: 'createDoc',
-						action: 'Create document',
-					},
-					{
-						name: 'Delete',
-						value: 'deleteDoc',
-						action: 'Delete document',
-					},
-				],
-			},
-			{
-				displayName: 'Database ID',
-				name: 'databaseId',
-				type: 'string',
-				required: true,
-				default: '',
-				// requiresDataPath: 'single',
-				description: 'Database ID in which transaction will be performed',
-				displayOptions: {
-					show: {
-						resource: [
-							'document'
-						],
-						operation: [
-							'createDoc',
-							'deleteDoc',
-						],
-					},
-				},
-			},
-			{
-				displayName: 'Collection ID',
-				name: 'collectionId',
-				type: 'string',
-				required: true,
-				default: '',
-				// requiresDataPath: 'single',
-				description: 'Collection to list/create documents in',
-				displayOptions: {
-					show: {
-						resource: [
-							'document'
-						],
-						operation: [
-							'createDoc',
-							'deleteDoc',
-						],
-					},
-				},
-			},
-			{
-				displayName: 'Document ID',
-				name: 'documentId',
-				type: 'string',
-				default: 'unique',
-				// requiresDataPath: 'single',
-				description: 'ID for collection | For creating, unique is used for generating unique ID, it can be modified for custom document ID',
-				displayOptions: {
-					show: {
-						resource: [
-							'document'
-						],
-						operation: [
-							'createDoc',
-							'deleteDoc',
-						],
-					},
-				},
-			},
-			// ...documentOperations,
-			// ...documentFields,
-			// ...storageOperations,
-			// ...storageFields,
-			// ...functionOperations,
-			// ...functionFields,
+			...documentOperations,
+			...documentFields,
+			...storageOperations,
+			...storageFields,
+			...functionOperations,
+			...functionFields,
+			...usersOperations,
+			...usersFields,
 		],
 	};
 
 	// The function below is responsible for actually doing whatever this node
-	// is supposed to do. In this case, we're just appending the `myString` property
-	// with whatever the user has entered.
+	// is supposed to do.
 	// You can make async calls and use `await`.
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][] | NodeExecutionWithMetadata[][] | null> {
 		const returnData: IDataObject[] = [];
-		console.log("INSIDE EXECUTE!");
 
 		let responseData;
 		const resource = this.getNodeParameter('resource', 0) as string;
 		const operation = this.getNodeParameter('operation', 0) as string;
-		const { url, projectId, apiKey } = await this.getCredentials('appwriteApi') as { url: string, projectId: string, apiKey: string };
+		const { url, projectId, apiKey } = await this.getCredentials('nAppwriteApi') as { url: string, projectId: string, apiKey: string };
 		const appwriteClient = await getAppwriteClient(url, projectId, apiKey);
-		console.log("Got appwrite client");
 		try {
 			if (resource === 'document') {
 				// get databaseId input
@@ -186,15 +111,12 @@ export class Appwrite implements INodeType {
 					let documentId: string;
 					if (docId.includes('unique')) {
 						documentId = ID.unique();
-						body = {
-							data: this.getNodeParameter('body', 0) as IDataObject,
-						}
+						body = this.getNodeParameter('body', 0) as IDataObject;
 					} else {
 						documentId = docId;
-						body = {
-							data: this.getNodeParameter('body', 0) as IDataObject,
-						};
+						body = this.getNodeParameter('body', 0) as IDataObject;
 					}
+					console.log("Body to send: ", body);
 
 					responseData = await createAppwriteDocument(appwriteClient, databaseId, collectionId, documentId, body);
 					returnData.push(responseData);
@@ -312,6 +234,96 @@ export class Appwrite implements INodeType {
 					const fileId = this.getNodeParameter('fileId', 0) as string;
 					responseData = await deleteAppwriteStorageFile(appwriteClient, bucketId, fileId);
 					returnData.push({ "success": responseData });
+				}
+			} else if (resource === 'users') {
+				if (operation === 'createUser') {
+					let userId = this.getNodeParameter('userIdOptional', 0) as string;
+					if (!userId) {
+						userId = ID.unique();
+					}
+					const email = this.getNodeParameter('email', 0) as string;
+					const verifyEmail = this.getNodeParameter('verifyEmail', 0) as boolean;
+					const name = this.getNodeParameter('name', 0) as string;
+					const phone = this.getNodeParameter('phone', 0) as string;
+					const verifyPhone = this.getNodeParameter('verifyPhone', 0) as boolean;
+					const password = this.getNodeParameter('password', 0) as string;
+					responseData = await createAppwriteUser(appwriteClient, userId, email, password, phone, name);
+					if (verifyEmail || verifyPhone) {
+						if (verifyEmail && verifyPhone) {
+							await updateAppwriteUser(appwriteClient, responseData.$id, undefined, verifyEmail, undefined, undefined, undefined, undefined, undefined, verifyPhone);
+						} else if (verifyEmail) {
+							await updateAppwriteUser(appwriteClient, responseData.$id, undefined, verifyEmail);
+						} else if (verifyPhone) {
+							await updateAppwriteUser(appwriteClient, responseData.$id, undefined, undefined, undefined, undefined, undefined, undefined, undefined, verifyPhone);
+						}
+					}
+					returnData.push(responseData);
+				} else if (operation === 'deleteUser') {
+					const userId = this.getNodeParameter('userId', 0) as string;
+					responseData = await deleteAppwriteUser(appwriteClient, userId);
+					returnData.push({ "success": responseData });
+				} else if (operation === 'deleteUserSession') {
+					const userId = this.getNodeParameter('userId', 0) as string;
+					const sessionId = this.getNodeParameter('sessionId', 0) as string;
+					responseData = await deleteAppwriteUserSession(appwriteClient, userId, sessionId);
+					returnData.push({ "success": responseData });
+				} else if (operation === 'deleteUserSessions') {
+					const userId = this.getNodeParameter('userId', 0) as string;
+					responseData = await deleteAppwriteUserSessions(appwriteClient, userId);
+					returnData.push({ "success": responseData });
+				} else if (operation === 'getUser') {
+					const userId = this.getNodeParameter('userId', 0) as string;
+					responseData = await getAppwriteUser(appwriteClient, userId);
+					returnData.push(responseData);
+				} else if (operation === 'getUserPreferences') {
+					const userId = this.getNodeParameter('userId', 0) as string;
+					responseData = await getAppwriteUserPrefs(appwriteClient, userId);
+					returnData.push(responseData);
+				} else if (operation === 'listUserIdentities') {
+					const userId = this.getNodeParameter('userId', 0) as string;
+					responseData = await listAppwriteUserIdentities(appwriteClient, userId);
+					returnData.push(responseData);
+				} else if (operation === 'listUserLogs') {
+					const userId = this.getNodeParameter('userId', 0) as string;
+					responseData = await listAppwriteUserLogs(appwriteClient, userId);
+					returnData.push(responseData);
+				} else if (operation === 'listUserMemberships') {
+					const userId = this.getNodeParameter('userId', 0) as string;
+					responseData = await listAppwriteUserMemberships(appwriteClient, userId);
+					returnData.push(responseData);
+				} else if (operation === 'listUserSessions') {
+					const userId = this.getNodeParameter('userId', 0) as string;
+					responseData = await listAppwriteUserSessions(appwriteClient, userId);
+					returnData.push(responseData);
+				} else if (operation === 'listUsers') {
+					const optionalFields = this.getNodeParameter('additionalFields', 0) as IDataObject;
+					const queriesToSend: string[] = []
+					if (optionalFields.options) {
+						const queries = optionalFields.query as IDataObject[];
+						console.log("Inside optional fields, options value: ", optionalFields.options);
+						console.log("Queries found: ", queries);
+						if (queries) {
+							for (const query of queries) {
+								queriesToSend.push(convertStringToQuery(`${query.index}`, query.value as string, query.value2 as string ?? undefined));
+							}
+						}
+					}
+					responseData = await listAppwriteUsers(appwriteClient, queriesToSend);
+					returnData.push(responseData);
+				} else if (operation === 'updateUser') {
+					const userId = this.getNodeParameter('userId', 0) as string;
+					const email = this.getNodeParameter('email', 0) as string ?? undefined;
+					const verifyEmail = this.getNodeParameter('verifyEmail', 0) as boolean ?? undefined;
+					const name = this.getNodeParameter('name', 0) as string ?? undefined;
+					const phone = this.getNodeParameter('phone', 0) as string ?? undefined;
+					const verifyPhone = this.getNodeParameter('verifyPhone', 0) as boolean ?? undefined;
+					const password = this.getNodeParameter('password', 0) as string ?? undefined;
+					const newPassword = this.getNodeParameter('newPassword', 0) as string ?? undefined;
+					const prefs = this.getNodeParameter('preferences', 0) as string ?? undefined;
+					const labels = this.getNodeParameter('labels', 0) as string[] ?? undefined;
+					const status = this.getNodeParameter('status', 0) as boolean ?? undefined;
+					responseData = await updateAppwriteUser(appwriteClient, userId, email, verifyEmail, name, phone, password, newPassword, prefs, verifyPhone, labels, status);
+					returnData.push(responseData);
 				}
 			} else {
 				throw new NodeApiError(this.getNode(), { "Error": "Resource not found" });
