@@ -164,9 +164,7 @@ export class NAppwrite implements INodeType {
 					// get documentID input
 					const documentId = this.getNodeParameter('documentId', 0) as string;
 
-					const body: IDataObject = {
-						data: this.getNodeParameter('body', 0) as IDataObject,
-					};
+					const body = this.getNodeParameter('body', 0) as IDataObject;
 
 					responseData = await updateAppwriteDocument(appwriteClient, databaseId, collectionId, documentId, body);
 					returnData.push(responseData);

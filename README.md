@@ -103,4 +103,6 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 * [github repository](https://github.com/zachhandley/n8n-nodes-appwrite)
 * [my website](https://zachhandley.com)
 
-
+## Changelog
+- 0.69.1 -- Fix to Update Document node
+- 0.69.0 -- Initial Release
