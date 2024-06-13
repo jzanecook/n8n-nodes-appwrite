@@ -48,7 +48,7 @@ export class NAppwriteApi implements ICredentialType {
 	test = {
 		request: {
 			baseURL: '={{$credentials?.url}}',
-			url: '/health',
+			url: '/v1/health',
 		},
 	};
 }
